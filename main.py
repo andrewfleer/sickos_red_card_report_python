@@ -74,10 +74,24 @@ def generate_report(matches, report_date, file_name):
                         )
                 report_file.write("\n")
 
+def send_report_to_discord(file_name, discord_url):
+    with open(file_name, "rb") as f:
+        file_data = f.read()
+        response = requests.post(
+            discord_url,
+            files={"file": (file_name, file_data)},
+        )
+        if response.status_code == 200 or response.status_code == 204:
+            print(f"Report successfully sent to Discord.")
+        else:
+            print(f"Failed to send report to Discord. Status code: {response.status_code}, Response: {response.text}")
+              
+
 
 def main():
     load_dotenv(dotenv_path="secrets.env")  # Load environment variables from .env file
     api_key = os.getenv("api_key")  # Get the API key from environment variables
+    discord_url = os.getenv("discord_url")  # Get the Discord webhook URL from environment variables
 
     start_time = time.perf_counter()
     api_counter = 0
@@ -148,6 +162,8 @@ def main():
 
     file_name = f"red_card_report_{yesterday}.txt"
     generate_report(all_matches, yesterday, file_name)
+
+    send_report_to_discord(file_name, discord_url)
 
     end_time = time.perf_counter()
     elapsed = end_time - start_time
