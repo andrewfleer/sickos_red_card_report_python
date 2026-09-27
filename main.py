@@ -43,17 +43,19 @@ class Event:
 ########################
 
 
-def generate_report(matches, report_date, file_name):
+def generate_report(matches, report_date, file_name, matches_with_red_cards, total_red_cards):
     with open(file_name, "w", encoding="utf-8") as report_file:
         report_file.write("="*60 + "\n")
         report_file.write(f"Red Card Report for {report_date}\n")
         report_file.write("="*60 + "\n\n")
+        report_file.write(f"Total Matches with Red Cards: {matches_with_red_cards}\n")
+        report_file.write(f"Total Red Cards: {total_red_cards}\n\n")
         for match in matches:
             if match.redCards > 0:
                 report_file.write(f"Match: {match.homeTeam.name} vs {match.awayTeam.name} ({match.league.name}, {match.league.country})\n")
                 report_file.write(f"Score: {match.homeScore} - {match.awayScore}\n")
                 report_file.write(f"Total Red Cards: {match.redCards}\n")
-                report_file.write("Red Card Events:\n")
+                report_file.write("Notable Events:\n")
                 for event in match.events:
                     event_emoji = ""
                     if event.eventType == "Goal":
@@ -111,6 +113,8 @@ def main():
         print("Error fetching fixtures:", fixtures_response.status_code)
         exit()
 
+    matches_with_red_cards = 0
+    total_red_cards = 0
     fixtures_data = fixtures_response.json()
     fixtures = fixtures_data.get("response", [])
     for fixture in fixtures:
@@ -155,13 +159,16 @@ def main():
 
             if event_type == "Card" and event_detail == "Red Card":
                 match.redCards += 1
+                total_red_cards += 1
 
             match_event = Event(event_time, event_extra_time, event_team, event_player, event_assist, event_type, event_detail)
             match.events.append(match_event)
+        if match.redCards > 0:
+            matches_with_red_cards += 1
         match_number += 1
 
     file_name = f"red_card_report_{yesterday}.txt"
-    generate_report(all_matches, yesterday, file_name)
+    generate_report(all_matches, yesterday, file_name, matches_with_red_cards, total_red_cards)
 
     send_report_to_discord(file_name, discord_url)
 
