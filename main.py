@@ -43,7 +43,7 @@ class Event:
 ########################
 
 
-def generate_report(matches, report_date, file_name, matches_with_red_cards, total_red_cards):
+def generate_report(matches, report_date, file_name, matches_with_red_cards=0, total_red_cards=0):
     with open(file_name, "w", encoding="utf-8") as report_file:
         report_file.write("="*60 + "\n")
         report_file.write(f"Red Card Report for {report_date}\n")
@@ -91,9 +91,14 @@ def send_report_to_discord(file_name, discord_url):
 
 
 def main():
-    load_dotenv(dotenv_path="secrets.env")  # Load environment variables from .env file
-    api_key = os.getenv("api_key")  # Get the API key from environment variables
-    discord_url = os.getenv("discord_url")  # Get the Discord webhook URL from environment variables
+    load_dotenv(dotenv_path="secrets.env")  # Load local secrets when running on a dev machine
+    api_key = os.getenv("api_key") or os.getenv("API_KEY")
+    discord_url = os.getenv("discord_url") or os.getenv("DISCORD_WEBHOOK_URL") or os.getenv("DISCORD_URL")
+
+    if not api_key:
+        raise ValueError("Missing api_key / API_KEY environment variable")
+    if not discord_url:
+        raise ValueError("Missing discord_url / DISCORD_WEBHOOK_URL / DISCORD_URL environment variable")
 
     start_time = time.perf_counter()
     api_counter = 0
