@@ -64,7 +64,9 @@ def generate_report(matches, report_date, file_name, matches_with_red_cards=0, t
                         if event.eventDetail == "Red Card":
                             event_emoji = "🟥"
                         elif event.eventDetail == "Yellow Card":
-                            event_emoji = "🟨"
+                            # event_emoji = "🟨"
+                            # skip this line if it's just a yellow card
+                            continue
                     if event.eventType == "Goal" or event.eventType == "Card":
                         event_time = event.time if event.time is not None else "N/A"
                         event_extra_time = event.extraTime if event.extraTime is not None else 0
