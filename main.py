@@ -59,6 +59,9 @@ def generate_report(matches, report_date, file_name, matches_with_red_cards=0, t
                 for event in match.events:
                     event_emoji = ""
                     if event.eventType == "Goal":
+                        # skip missed penalties
+                        if event.eventDetail == "Missed Penalty":
+                            continue
                         event_emoji = "⚽"
                     elif event.eventType == "Card":
                         if event.eventDetail == "Red Card":
