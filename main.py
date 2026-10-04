@@ -177,6 +177,8 @@ def main():
             matches_with_red_cards += 1
         match_number += 1
 
+        time.sleep(0.25)  # Sleep for 250ms to avoid hitting rate limits
+
     file_name = f"red_card_report_{yesterday}.txt"
     generate_report(all_matches, yesterday, file_name, matches_with_red_cards, total_red_cards)
 
