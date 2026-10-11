@@ -129,8 +129,8 @@ def main():
     fixtures = fixtures_data.get("response", [])
     for fixture in fixtures:
         fixture_id = fixture.get("fixture", {}).get("id")
-        leauge_data = fixture.get("league", {})
-        league = League(leauge_data.get("id"), leauge_data.get("name"), leauge_data.get("country"))
+        league_data = fixture.get("league", {})
+        league = League(league_data.get("id"), league_data.get("name"), league_data.get("country"))
         home_team_data = fixture.get("teams", {}).get("home", {})
         away_team_data = fixture.get("teams", {}).get("away", {})
         home_team = Team(home_team_data.get("id"), home_team_data.get("name"))
